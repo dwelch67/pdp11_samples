@@ -1,0 +1,176 @@
+
+See top level README for information on running these programs.
+
+Portions of this example were described in the top level README.  This
+example is a starting point for writing pdp11 bare metal programs as
+it provides an in-program way to "see" what is going on.  Sure you
+could single step and examine the registers or memory as you go.  I
+prefer this method.
+
+I am jumping straight into using C, in part because the syntax used
+by gnu assembler does not match the classic pdp11 assembly language.
+If you dont already understand this, assembly language is not like
+JAVA or Python or C/C++, there is no standards body that holds meetings
+and defines the language.  The processor executes what we call machine
+code, just bits, ones and zeros, that is well defined as you cannot
+vary that the logic is in place done.  Assembly language is ideally a
+way to write machine code in a human readable form, so first off that
+means some mnemonics that we can remember and type and read, in addition
+some other non instruction things to help make it so we can write
+programs at this level.  For example labels which are really nothing
+more than an address.
+
+This program once compiled and disassembled (I prefer that to compiling
+to assembly as you cant always see everything in the compiler output
+there are directives to be resolved, etc, the disassembly mostly shows
+the whole story).
+
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:   15c6 8000       mov $-100000, sp
+   4:   09f7 0004       jsr pc, c <notmain.o>
+    ...
+
+0000000a <_dummy>:
+   a:   0087            rts pc
+
+0000000c <notmain.o>:
+   c:   1166            mov r5, -(sp)
+   e:   1185            mov sp, r5
+  10:   15c1 0030       mov $60, r1
+  14:   17c0 ff74       mov *$177564, r0
+  18:   45c0 ff7f       bic $-201, r0
+  1c:   03fb            beq 14 <notmain.o+0x8>
+  1e:   105f ff76       mov r1, *$177566
+  22:   0a81            inc r1
+  24:   2057 0038       cmp r1, $70
+  28:   02f5            bne 14 <notmain.o+0x8>
+  2a:   1066            mov r1, -(sp)
+  2c:   09f7 ffda       jsr pc, a <_dummy>
+  30:   65c6 0002       add $2, sp
+  34:   17c0 ff74       mov *$177564, r0
+  38:   45c0 ff7f       bic $-201, r0
+  3c:   03fb            beq 34 <notmain.o+0x28>
+  3e:   1585            mov (sp)+, r5
+  40:   0087            rts pc
+
+
+So take this machine code
+
+   e:   1185            mov sp, r5
+
+1185 hex
+0001000110000101 binary
+0 001 000 110 000 101 binary
+010605 octal
+
+We know that sp is r6 and we have r5 in the assembly language so I assume
+the 6 and 5 in the octal representation are the two registers, the other
+bits likely describe the addressing mode and the opcode, mov.
+
+This one is pretty straight forward it likely resembles the documentation
+on the pdp11 instruction set.
+
+I thought this one varied, but actually it matches a pdp-11/40 manual
+I have handy.
+
+  3e:   1585            mov (sp)+, r5
+
+Direct addressing Autoincrement.  The parenthesis means the address of
+so we are going to take the stack pointer, use it as an address in
+memory, read the thing in memory and move that into r5.  The plus
+means increment sp after you do that.  So if sp was 0x100 and you
+did this you would read memory at addres 0x100 save that value in r5
+the increment sp to 0x102 since things on the stack are 16 bits wide.
+
+All of these point out something that makes little sense to me.  I
+do see the argument, but lets go back to any schooling we have had.
+We always write
+
+a = b + c
+
+to mean that we add b + c and save it in a.  We never wrote
+
+b + c = a
+
+to imply that we add b + c and save it in a.  None of our math or science
+text books or teachers did it that way.
+
+So if I want to say
+
+r1 = 0x60
+
+why would I put r1 on the right?
+
+  10:   15c1 0030       mov $60, r1
+
+The argument would be we are moving this thing to that thing.  Not
+an instruction in this instruciton set but when you see some others
+
+add r0,r1,r2
+
+that means r0 = r1 + r2 with the registers in the correct order.  So
+for the pdp11 we just have to remember everything is backward.  On
+the wrong side of the comma.
+
+This one doesnt quite match the text.
+
+  10:   15c1 0030       mov $60, r1
+
+0x60 is an immediate value, it is actually a pc relative thing the
+instruction is basically saying use the thing the pc is pointing to
+and increment the pc by a location.  But the text says to use a
+pound sign
+
+mov #60,r1
+
+And of course octal is assumed.  Later instruction sets used $ to
+indicate hex but here in the disassembly we see 60 octal on the
+assembly side and 0x0030 on the machine code side which is in hex.
+Can tell because those make sense
+
+30      hex
+11 0000 binary
+110000  binary
+110 000 binary
+60      octal
+
+But it gets worse, what happens in the assembly not disassebly side
+if we write that does it use $ to mean hex or just immediate?
+
+mov $60,r1
+
+   a:   15c1 003c       mov $74, r1
+
+Oh how dreadful, it interpreted that as 60 decimal.
+
+mov $60,r1
+mov $060,r1
+mov $0x60,r1
+
+   a:   15c1 003c       mov $74, r1
+   e:   15c1 0030       mov $60, r1
+  12:   15c1 0060       mov $140, r1
+
+So the gnu binutils assembly language for immediate numbers apparently
+uses C syntax.  If you put a 0 out in front of a number (without the x)
+it makes it octal.  You put the 0x it makes it hex, you dont do either
+you get decimal.  And where the classic text uses a pound # to define
+an immediate gnu as uses a dollar sign $.  Gotta love gnu folks.
+
+The next one that jumps out is absolute address, another pc relative
+one as the immediate is after the instruction.
+
+  14:   17c0 ff74       mov *$177564, r0
+
+This means read what is at the address 0177564, which we really now
+know means 777564 because it is in that special upper 4K space, but
+nevertheless is encoded as 01777564  (0xFF74)  but instead of the
+@#177564 syntax we have *$ the * is like a C pointer thing and the
+dollar sign a GNU pdp11 immediate.
+
+The top level file ASSEMBLY contains information gathered here with
+respect to the differences between DEC documented assembly language
+and GNU assembly language for the pdp11.

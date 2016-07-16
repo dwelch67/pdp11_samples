@@ -1,0 +1,404 @@
+
+From Wikipedia:
+
+The PDP-11 is considered by some experts to be the most popular
+minicomputer ever. Design features of the PDP-11 influenced the design
+of most late-1970s computer systems including the Intel x86 and the
+Motorola 68000.
+
+From opencores:
+
+US-Pat 3614740 (1971) - covers PDP-11 Instruction Set (control transfer)
+US-Pat 3614741 (1971) - covers PDP-11 Instruction Set (PC as general
+                        register)
+US-Pat 3710324 (1973) - covers 'processor and peripheral connected via
+                        single bus' UNIBUS architecture
+
+All patents covering the PDP-11 architecture are expired by now. The
+PDP-11 is completely unencumbered from an intellectual property point
+of view since 1995.
+
+----
+
+Digital Equipment Corporation or DEC or Digital, was a huge deal they
+were the Dell and Lenovo and others combined.  Like IBM was to the
+PC in the IBM PC days.
+
+It is kinda hard to imagine that a computer with less power than
+the one inside your TV remote control cost more than your house
+or a street full of houses, and that you had to buy computer time
+if you could find it to use a computer.  No I am not that old but old
+enough.  My assumption based on later computers is that you would take
+your punch cards and turn them in and they would run your program some
+time/day in the future, your program hopefully output something to
+the printer which was then left for you to pick up.  There was still
+a mainframe when I started college and we could use it, by sitting at
+the dumb terminals and submitting our programs that way, the printouts
+came out not days later but in tens of minutes lets say, depends on how
+many folks were submitting jobs.  There were IBM PC clones we could use
+too (likely running DOS).  And a small number of DEC Pro 350 machines
+for a particular professors class, that were not maintained nor supported
+by the computer science department.  (I was an electrican engineer that
+happened to take a class not that that matters).  I am self taught
+as a programmer/software engineer (ahh now it makes sense when you
+see my code) except that I couldnt figure out assembly language,
+8088/8086 was just not sinking in.  So I took a CS class even though I
+didnt have the prerequisites, the teacher let me in.  It was half
+pdp11 assembly language and half C this new language that was gaining
+popularity.  C had been around for well over a decade by then but the
+PC world was still in the Turbo Pascal days or folks just programmed
+in assembly language.  C had not spread yet to anything anyone could
+afford.  I still think that the pdp11 is the best first instruction
+set to learn, or at least one of them.  I think the MSP430 is very
+much related and the syntax is a bit modern with the current assemblers,
+also a good first start.  With that class then 8088/8086 made sense
+although was far more painful than the pdp11, and still is more painful
+than other instruction sets.
+
+I have started many pdp11 projects and given up.  Hopefully not this
+time, usually I start with my own simulator, but this time instead I
+went with a well known simulator that can be used on the whole range
+of DEC PDP (Programmable Data Processor) computers, and a number of
+other computers from that era.  As with all of my projects at github
+my interest is in bare metal.  My simulators were about the instruction
+set, and ideally I want to head there even though most of this repo will
+most likely be just C which basically hides the details of the
+instruction set.  Maybe I will migrate over to one of the open core
+pdp11's or maybe make my own.
+
+There is a vast array of documentation out there for all the various
+pdp11 computers.  Some of the pdfs you can search some are just scans
+of paper so you cant.  There was quite an array of pdp11 computers
+with various features/peripherals, etc.  Still not completely sure
+on the terminology.  When we talk about a PC we are referring to the
+IBM PC.  But that contained the 8086 processor, the correct term was not
+8088.  But they call these pdp11 as it was the name of the thing
+pdp11/20  pdp11/40.  So is the instruction set correctly called pdp11?
+Also note at this point in time the processor was not one chip, the
+computer was not mostly one motherboard with a bunch of chips, it was
+a rack filled with boxes of cards with chips.  Also it was in the era
+of core memory or magnetic core memory.  Which I have always found
+very cool and recently purchased (likely way over priced but there is
+really not the right market to accurately price these boards) a core
+memory for a sperry rand univac.  As a kid I had tried to read a book
+from the library about computers and it quickly got into core memory
+which I remembered the term but was not old enough to understand any
+of it.  Now of course I understand all of it, or enough to be dangerous.
+
+The other key to this puzzle is that not long ago, somewhere in the
+gcc 5.x.x timeframe I think someone added a pdp11 backend to the
+main gcc code base, not some patch like the msp430 and others are/were
+for so long.  But it is right in there, and is at least maintained into
+6.x.x so far.  I have a build_gcc repo at github (near where you found
+this) which has a linux script for building a pdp11 toolchain from
+gnu sources.  That is what I am using here.  10+ years ago when I used
+to also run windows I could without too much trouble build gnu based
+cross compilers from sources using mingw32 and used to maintain both
+scripts, but dont bother with that anymore, a few pennies will buy
+you a blank DVD or thumb drive from which you can run a live version
+of linux (I prefer linux mint right now) and not have to install
+anything on your computer's hard drive.  Or can if you want from that
+live DVD.  Yes some apt-getting is required from a stock ubuntu/mint
+install for the things you need to build, but it tells you as you
+fail what to get and eventually it works.
+
+You can apt-get install simh to get...simh.  The name for the simulator
+but it is actually a suite of inidividual simulators for these various
+sytems.  The one I am using is the plain vanilla pdp11.  Sources are
+available, the 4.x as of this writing appears to be at github.  For
+some reason the newly released linux mint 18 has version 3.8 I think
+it is.
+PDP-11 simulator V3.8-1
+The program name you run is pdp11 and then you get a sim> prompt.
+From which you can show the configuration
+
+sim> show con
+PDP-11 simulator configuration
+
+CPU, 11/73, NOCIS, idle disabled, autoconfiguration enabled, 256KB
+SYSTEM
+RHA, address=17776700-17776753, vector=254
+RHB, disabled
+CLK, 60Hz, address=17777546-17777547, vector=100
+PCLK, disabled
+PTR, address=17777550-17777553, vector=70, not attached
+PTP, address=17777554-17777557, vector=74, not attached
+TTI, address=17777560-17777563, vector=60, 7b
+TTO, address=17777564-17777567, vector=64, 7p
+...
+
+Being my first assembly langauge back then and that C had not yet so
+strongly influenced the world, and our brains were still trying to
+deal with number bases other than 10 (and 60, clocks and longitude
+and lattitude, etc).  So octal seemed to make sense to people, visual
+drawings for the machine code for the pdp11 uses 3 bit fields, trying
+to re-visualize that in hex just looks wrong.  So there is this
+dilemma of being a great first instruction set, but the documentation
+and tools are so strongly octal based.  Today tools use C style
+syntax, we might/would use 0x30 in an assembly langauge program, C style
+hex.  Early 8088/86 you would use 30h, and for microcontrollers and
+others of that era and perhaps before if you were doing hex it might
+be $30.  I now dont like the old syntax.  And one more thorn in the
+toe is as with other gnu assembler ports, the gnu assembler syntax
+doesnt match the old documentation, so it is a bit of a guessing game
+how to get it to do anything.  We have this great instruction set, a
+well tested simulator, a toolchain, but some pain.
+
+So those numbers above.
+
+TTO, address=17777564-17777567, vector=64, 7p
+
+Those are octal.  177..564 is 1 111 111 ... 101 110 100, collections
+of three bits where hex is collections of four bits.  Four is way more
+sane since it is a power of two and binary is base 2.  And our brains
+can now handle hex, I suspect back then there had to be this problem
+of how do we represent number bases other than base 10 when we only
+have 10 numeric digits we are used to.  Octal fit right in you could
+use 0-7 and still be using numbers.  Eventually someone said hey lets
+just use some letters 0-9,a-f, and now we can do hex.
+
+You may also have forgotten if you even knew how to represent octak
+in C.  If the number is precedded padded up front with a zero it is
+octal:
+
+0177566
+
+That is as used in this code a 16 bit number (interesting that they
+were heavy on octal and used a 16 bit register instead of say 18, some
+systems used 9 bit bytes in the octal days because 9 fits in nicely
+with octal which is sets of three bits).  The 0 is there just to say
+we are using octal.  The latter 5 numbers are 3 bits each making 15
+the 1 up front by itself is there to give us the 16th bit.
+
+I am not super strong with octal, my brain works primarily in hex first
+then binary then decimal last.  I have to slow way down to see and
+think octal, trying to convert it to hex in my head.  But you will
+good, bad, or otherwise see me jumping around between hex and octal.
+The tools will sometimes show octal without the leading zero as above
+
+    TTO, address=17777564-17777567, vector=64, 7p
+
+Or say in this disassembly:
+
+    14: 105f ff76       mov r1, *$177566
+
+Even though the assembly that created that has to have a leading zero
+if you enter it like the disassembly it thinks it is decimal.  Gotta
+love gnu ports.  (yeah the machine code there is in hex, as well as
+the address on the left)
+
+So not going to dive in too deep here, but you have 8 16 bit registers
+one is the pc (they had the patent on that!) another the stack pointer
+then basically 6 general purpose.  So one might assume correctly that
+means we have a 64K address space.  Well from a pure sense yes, we
+use registers to access things and they are 16 bits wide.
+
+So how do we deal with the TTy Output (TTO above) with all of those
+bits or if you look at the KL11 or DL11 teletype documentation they
+show not as many bits 777566 but that is two bits too many for our
+16 bit registers.
+
+
+From a PDP-11/40 manual:
+
+----
+
+6.1 PDP-11 FAMILY BASIC ADDRESSING LOGIC
+The addresses generated by all PDP-11 Family Central Processor Units
+(CPUs) are 18-bit direct byte addresses. Although the PDP-11 Family
+word length and operational logic is all 16-bit length, the UNIBUS and
+CPU addressing logic actually is 18-bit length. Thus, while the PDP-11
+word can only contain address references up to 32K words (64K bytes)
+the CPU and UNIBUS can reference addresses up to 128K words (256K
+bytes). These extra two bits of addressing logic provide the basic frame-
+work for expanded memory paging.
+
+In addition to the word length constraint on basic memory addressing
+space, the uppermost 4K words of address space is always reserved for
+UNIBUS I/O device registers. In a basic PDP-11/40 memory configura·
+tion (without Management) all address references to the uppermost 4K
+words of 16-bit address space (170000-177777) are converted to full
+18-bit references with bits 17 and 16 always set to 1. Thus, a 16·bit
+reference to the I/O device register at address 173224 is automatically
+internally converted to a full 18-bit reference to the register at address
+773224. Accordingly, the basic PDP-11/40 configuration can directly
+address up to 28K words of true memory, and 4K words of UNIBUS I/O
+device registers. Memory configurations beyond this require the PDP-
+11/40 Memory Management Unit.
+
+----
+
+So not obvious initally so some hacking was required.  The KL11
+or DL11 teletype that we want to "use" as our dumb terminal is not
+supported by simh using those names they use TTO and TTI for teleletype
+in and out.  The manuals you will see addresses 777560, 777562, 777564
+and 777566.  We see that simh shows us way more bits than that.  But
+you know it works out okay.  We program using 177566, the paragraphs
+above give us a warm fuzzy that that address becomes 777566 matching
+the manuals.  And it also matches the 17777566 address described by
+simh.  It just works in bare metal.  We have to use a/the mmu to get
+beyond that.  The simh show config tells us we have 256KBytes which
+we would have to use some tricks to get at all of that (mmu), but dont
+care the 64Kbytes minus the 4Kbytes that maps into the peripherals is
+enough.
+
+The next thing that got me was that my tiny assembly test program that
+was trying to shove a byte out the teletype (punch some output) was
+ending in halt, which I guess is a real instruction the toolchain and
+simulator seem to recognize it.  Interestingly because they I guess try
+to simulate the real computer, the character didnt make it to the
+console before I hit halt so it wasnt working.  When I then later
+polled the busy bit and tried to send out several characters I only
+lost the last one when I hit halt.  So I really was addressing the
+peripheral and it was trying to work.
+
+
+Baremetal, bare metal, bare-metal.  It means no operating system, it
+does not mean writing machine code, nor assembly language.  Generally
+one uses C with at least a little bit of assembly language to bootstrap
+the C.
+
+Modern (relative to the pdp11) processors have harcoded logic that
+defines how they boot.  Generally they either read a specific address
+to find the address of where the boot code is.  Or they start execution
+at a specific address.  That is not what we have here.
+
+http://retrotechnology.com/pdp11/11_panel_2.jpg
+
+If you think about it, you couldnt just run down to best buy and
+buy a DVD with Windows or RedHat Linux on it stick it in the DVD rom
+drive and boot and install software.  Granted they could have created
+a mechanism equivalent for that time, but instead they put switches
+on the front.  I have to read more to see if there was some other way
+to bootstrap the computer.  You could certainly hand load instructions
+in, and if you have a tape or card reader or whatever then the program
+you loaded would then load from tape a larger program (that you would
+likely not want to flip switches to load), and so on from there.  Later
+they did make them such that they could boot from a floppy disk or
+other.  Point being is that although there are likely common conventions
+you can load and run your program using the front panel from any
+address you have memory behind.  For now I am going to start at address
+zero (which I dont think is the convention).
+
+Unlike other gnu ports you dont actually need to define _start, it wont
+complain if you dont, but just to be consistent.  Some compilers and
+some ports put an underline in front of external labels, some dont.\
+This one does, so when we call our C code we use an underline in
+front of the name, likewise if we create labels in assembly for C
+to call we apply an underline as well.
+
+This is our minimum bootstrap, set the stack pointer and call our C
+entry point.
+
+.globl _start
+_start:
+
+    mov $0x8000,sp
+    jsr pc,_notmain
+    halt
+
+.globl _dummy
+_dummy:
+    rts pc
+
+I have written ramblings longer than this one describing my baremetal
+style/shortcuts.  This bootstrap does not support .data (pre-initialized
+variables) for example
+
+int hello = 5;
+
+Although you might get lucky.  Likewise with .bss, variables being
+pre-initialized to zeros, you might get lucky.  Of course .text works
+and depending on how you use your linker script read only data may
+end up there or .rodata, and the tool should place that for you just
+fine.
+
+const int hello = 5;
+
+The tt01 example demonstrates sending some characters out.
+
+extern void dummy ( unsigned int );
+
+#define TKS (*((volatile unsigned int *)0177560))
+#define TKB (*((volatile unsigned int *)0177562))
+#define TPS (*((volatile unsigned int *)0177564))
+#define TPB (*((volatile unsigned int *)0177566))
+
+static void punch ( unsigned int x )
+{
+    while((TPS&0x80)==0) continue;
+    TPB=x;
+}
+
+static void drain_tto ( void )
+{
+    while((TPS&0x80)==0) continue;
+}
+
+void notmain ( void )
+{
+    unsigned int ra;
+
+    for(ra=0x30;ra<=0x37;ra++) punch(ra);
+    dummy(ra);
+    drain_tto();
+    return;
+}
+
+If you read one of the old documents about the KL11/DL11 the register
+at 17...7564, bit 7 is the ready bit.  When set we can send a character
+out the teletype.  So we wait for that.  It appears it is one character
+deep in storage at least in this sim, so before we halt (if you end
+your program and end it in a halt which I recommend in this sim if you
+want to stop) we should drain out that last character.
+
+There is a program bintosimh that we need or some other program that
+does the same thing.  The "binary" format that simh wants to see
+is files in chunks with a 6 byte header and a checksum.
+
+        //001             ---
+        //xxx              |
+        //lo_count         |
+        //hi_count         |
+        //lo_origin        > count bytes
+        //hi_origin        |
+        //data byte        |
+        //:                |
+        //data byte       ---
+        //checksum
+
+Since my programs wont be larger than 64K one chunk will do, so this
+tool takes the .bin file and applies the required headers and I use
+.sim as the name of the output, you can do whatever you want.  You
+need at least the one chunk with the program in it and then the last
+one needs a length of 6 to indicate that there is no data other than
+the header, when it sees that it knows it has finished loading.
+bintosimh takes care of this.  See the Makefile.
+
+To run these programs, even though the software is called simh there
+isnt a simh binary, I am using pdp11.
+
+$ pdp11
+
+PDP-11 simulator V3.8-1
+sim> load notmain.sim
+sim> go
+01234567
+HALT instruction, PC: 000012 (RTS PC)
+sim> quit
+Goodbye
+
+simh, allows for typing shortcuts so you could also
+
+$ pdp11
+
+PDP-11 simulator V3.8-1
+sim> lo notmain.sim
+sim> g
+01234567
+HALT instruction, PC: 000012 (RTS PC)
+sim> q
+Goodbye
+
+And have the same results.
+

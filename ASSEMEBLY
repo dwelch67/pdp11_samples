@@ -1,0 +1,23 @@
+
+See the tt01 README for more.  GNU assembler as one would expect made
+up their own assembly that does not match the DEC documentation so
+we have to work our way through translating between the two.
+
+mov #30,r1      DEC immediate
+mov $030,r1     GNU as, $ instead and uses C style numbers
+
+mov @#1234,r1   DEC Absolute
+mov *$01234,r1  GNU as
+
+mov (r2),r1     DEC register deferred (indirect)
+mov @r1,r1      DEC alternate syntax
+mov (r2),r1     GNU as
+mov *(r2),r1    GNU as also takes this as an equivalent
+
+So in general so far it seems
+
+- Where DEC uses #, GNU uses $.
+- Where DEC uses @, GNU uses *.
+- DEC defaults to octal for immediates, GNU uses C syntax.
+
+The GNU assembler expects underscores to be added to external labels.
