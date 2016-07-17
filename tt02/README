@@ -1,0 +1,10 @@
+
+See top level README for information on running these programs.
+
+See tt01 and the top level README for more information on how these
+files fit together.
+
+This example, derived from tt01, reads from the keyboard of the
+teletype (console) and then echos back what you type.  It cooks it in
+that if you type a carriage return it adds a line feed.  When you
+press ESC (0x1B) it will get out of the loop.
