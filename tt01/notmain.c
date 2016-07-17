@@ -1,5 +1,4 @@
 
-
 extern void dummy ( unsigned int );
 
 #define TKS (*((volatile unsigned int *)0177560))
@@ -27,4 +26,3 @@ void notmain ( void )
     drain_tto();
     return;
 }
-

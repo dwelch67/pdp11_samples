@@ -174,3 +174,55 @@ dollar sign a GNU pdp11 immediate.
 The top level file ASSEMBLY contains information gathered here with
 respect to the differences between DEC documented assembly language
 and GNU assembly language for the pdp11.
+
+I saw a document mention ANSCII, which googling we now call ASCII.
+You probably want to stay within the first 128 characters, 7 bit
+and not venture past that.  The peripheral in simh can be set to an
+8 bit from the default of 7 bit.  But for numbers and letters you dont
+really need all 8 bits.
+
+A small optimization in the code, using char pointers instead of
+unsigned int:
+
+#define TKS (*((volatile char *)0177560))
+#define TKB (*((volatile char *)0177562))
+#define TPS (*((volatile char *)0177564))
+#define TPB (*((volatile char *)0177566))
+
+The status bit being polled now becomes the sign or N bit.  This is a
+C compiler, so not expecting it to be that efficient, and the registers
+are defined as 16 bit not 8 bit, one would have to insure it is safe to do the wrong sized access.
+
+Disassembly of section .text:
+
+00000000 <_start>:
+   0:   15c6 8000       mov $-100000, sp
+   4:   09f7 0004       jsr pc, c <notmain.o>
+    ...
+
+0000000a <_dummy>:
+   a:   0087            rts pc
+
+0000000c <notmain.o>:
+   c:   1166            mov r5, -(sp)
+   e:   1185            mov sp, r5
+  10:   95c1 0030       movb    $60, r1
+  14:   97c0 ff74       movb    *$177564, r0
+  18:   04fd            bge 14 <notmain.o+0x8>
+  1a:   905f ff76       movb    r1, *$177566
+  1e:   0a81            inc r1
+  20:   a057 0038       cmpb    r1, $70
+  24:   02f7            bne 14 <notmain.o+0x8>
+  26:   15e6 0038       mov $70, -(sp)
+  2a:   09f7 ffdc       jsr pc, a <_dummy>
+  2e:   65c6 0002       add $2, sp
+  32:   97c0 ff74       movb    *$177564, r0
+  36:   04fd            bge 32 <notmain.o+0x26>
+  38:   1585            mov (sp)+, r5
+  3a:   0087            rts pc
+
+As you know from my other code I generally do not use the volatile pointer
+trick, I prefer to insure the correct access is done against logic and
+burn even more instructions/performance to make sure that happens.
+
+
